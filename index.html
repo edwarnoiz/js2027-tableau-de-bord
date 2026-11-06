@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@500&display=swap" rel="stylesheet">
 <style>
 :root{
+  --dial:#EEF2F6; --ok:#2A8C7E; --ahead:#3B76B8;
   --bg:#F6F8FA; --panel:#FFFFFF; --ink:#16263A; --muted:#5B6878; --line:#DDE3EA;
   --brand:#1F3A5F; --brand-ink:#FFFFFF;
   --fait:#2A8C7E; --cours:#E0A030; --venir:#C5CCD5; --retard:#C8414F; --track:#EDF1F5;
@@ -16,9 +17,11 @@
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark){
-  :root{ --bg:#0F1620; --panel:#17212D; --ink:#E6ECF2; --muted:#9AA7B6; --line:#2A3746;
+  :root:not([data-theme="light"]){ --dial:#111A25; --ok:#4DB3A3; --ahead:#6FA3DD; --bg:#0F1620; --panel:#17212D; --ink:#E6ECF2; --muted:#9AA7B6; --line:#2A3746;
     --brand:#5D8CC4; --brand-ink:#0F1620; --fait:#4DB3A3; --cours:#F0B54E; --venir:#4A5767; --retard:#E36673; --track:#223040; color-scheme: dark; }
 }
+:root[data-theme="dark"]{ --dial:#111A25; --ok:#4DB3A3; --ahead:#6FA3DD; --bg:#0F1620; --panel:#17212D; --ink:#E6ECF2; --muted:#9AA7B6; --line:#2A3746;
+    --brand:#5D8CC4; --brand-ink:#0F1620; --fait:#4DB3A3; --cours:#F0B54E; --venir:#4A5767; --retard:#E36673; --track:#223040; color-scheme: dark; }
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.45}
 .wrap{max-width:1180px;margin:0 auto;padding:28px 20px 60px;display:grid;gap:28px}
@@ -34,6 +37,20 @@ h1{font-family:var(--serif);font-weight:500;font-size:clamp(1.6rem,3.5vw,2.3rem)
 .refresh{font:inherit;font-size:.85rem;margin-left:8px;padding:3px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink);cursor:pointer}
 .take{font-size:1.05rem;max-width:62rem;margin:6px 0 0}
 .take b{font-weight:600}
+.gauges{display:grid;grid-template-columns:1fr 1.45fr 1fr;gap:12px;align-items:stretch}
+.gauge{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 14px 16px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px;min-width:0}
+.gauge h3{margin:0 0 2px;font-size:.92rem;font-weight:600}
+.g-main h3{font-size:1.05rem}
+.gsvg{width:100%;max-width:230px}
+.g-main .gsvg{max-width:340px}
+.gsvg svg{display:block;width:100%;height:auto;overflow:hidden}
+.gval{margin:-2px 0 0;font-family:var(--serif);font-weight:500;font-size:1.7rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.g-main .gval{font-size:2.4rem}
+.gstat{margin:2px 0 0;font-weight:600;font-size:.9rem}
+.gsub{margin:4px 0 0;font-size:.78rem;color:var(--muted);max-width:22rem}
+.needle{transition:transform 1.1s cubic-bezier(.2,.8,.2,1)}
+@media (prefers-reduced-motion: reduce){.needle{transition:none}}
+@media (max-width:760px){.gauges{grid-template-columns:1fr 1fr}.g-main{grid-column:1/-1;order:-1}}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
 .kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;gap:4px}
 .kpi .l{font-size:.8rem;color:var(--muted)}
@@ -83,7 +100,7 @@ footer{font-size:.8rem;color:var(--muted)}
       <div>
         <h1>Journées scientifiques RSN 2027</h1>
         <p class="sub">Avancement des travaux au <span id="maj"></span>. Événement les 30 et 31 mars 2027.</p>
-        <p class="sub"><span id="etat" class="etat">Chargement du Google Sheet…</span> <button type="button" class="refresh" onclick="location.reload()">↻ Actualiser</button></p>
+        <p class="sub"><span id="etat" class="etat">Chargement du Google Sheet…</span> <button type="button" class="refresh" onclick="location.reload()">↻ Actualiser</button> <button type="button" class="refresh" id="theme" aria-label="Changer de thème"></button></p>
       </div>
       <a class="btn" href="https://docs.google.com/spreadsheets/d/1SuvtGdo_z4SNHIS8nyhP7XJomjMQRiBCQNAH3KZcqvA/edit?usp=sharing" target="_blank" rel="noopener">
         <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 9h18M3 15h18M9 3v18" stroke="currentColor" stroke-width="2"/></svg>
@@ -92,6 +109,12 @@ footer{font-size:.8rem;color:var(--muted)}
     </div>
     <p class="take" id="take"></p>
   </header>
+
+  <section class="gauges" aria-label="Cadrans d’avancement">
+    <div class="gauge g-side"><h3>Temps écoulé</h3><div class="gsvg" id="g-temps"></div><p class="gval" id="gv-temps">—</p><p class="gstat" id="gs-temps"></p><p class="gsub">Part de la durée du projet déjà écoulée (6 juin 2026 au 30 avril 2027). Le repère marque l’événement.</p></div>
+    <div class="gauge g-main"><h3>Avancement global</h3><div class="gsvg" id="g-global"></div><p class="gval" id="gv-global">—</p><p class="gstat" id="gs-global"></p><p class="gsub" id="gx-global"></p></div>
+    <div class="gauge g-side"><h3>Niveau de risque</h3><div class="gsvg" id="g-risque"></div><p class="gval" id="gv-risque">—</p><p class="gstat" id="gs-risque"></p><p class="gsub">Part des tâches déjà commencées et non terminées qui sont en retard ou marquées à risque.</p></div>
+  </section>
 
   <section class="kpis" id="kpis"></section>
 
@@ -141,6 +164,21 @@ footer{font-size:.8rem;color:var(--muted)}
 </div>
 
 <script>
+// Mode sombre / clair (mémorisé sur cet appareil)
+(() => {
+  const root=document.documentElement, btn=document.getElementById('theme');
+  let saved=null; try { saved=localStorage.getItem('js2027-theme'); } catch(e) {}
+  const sombre = () => root.dataset.theme ? root.dataset.theme==='dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  const maj = () => { btn.textContent = sombre() ? '☀️ Mode clair' : '🌙 Mode sombre'; };
+  if (saved) root.dataset.theme = saved;
+  maj();
+  btn.addEventListener('click', () => {
+    root.dataset.theme = sombre() ? 'light' : 'dark';
+    try { localStorage.setItem('js2027-theme', root.dataset.theme); } catch(e) {}
+    maj();
+  });
+  matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', maj);
+})();
 // ===== RÉGLAGES =====
 // Google Sheet partagé « Tous les utilisateurs disposant du lien » (lecture). Pas besoin de le publier.
 const SHEET_ID = "1SuvtGdo_z4SNHIS8nyhP7XJomjMQRiBCQNAH3KZcqvA";
@@ -295,7 +333,77 @@ bars('b-resp', group('assigne','Non assigné').sort((a,b)=>b.n-a.n), r=>r.n+' t�
 
 // échéancier
 const NS='http://www.w3.org/2000/svg';
-const sv = (tag, attrs, parent) => { const e=document.createElementNS(NS,tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.append(e); return e; };
+const sv = (tag, attrs, parent) => { const e=document.createElementNS(NS,tag); for (const k in attrs) { if (k==='fill'||k==='stroke'||k==='opacity') e.style[k]=attrs[k]; else e.setAttribute(k, attrs[k]); } if (parent) parent.append(e); return e; };
+
+// ===== Cadrans =====
+const PROJET_DEBUT = "2026-06-06", PROJET_FIN = "2027-04-30";
+const TOLERANCE = 3;   // écart (points de %) considéré « dans les temps »
+const ECART_MAX = 25;  // amplitude du cadran central (± points)
+const jour = s => Date.parse(s+'T00:00:00Z');
+const tNow = jour(today);
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+// Progression prévue à date : pour chaque tâche datée, part de sa durée déjà écoulée ; tâche sans dates = 0
+const prevu = Math.round(DATA.reduce((s,t) => {
+  if (!t.debut || !t.fin) return s;
+  const a=jour(t.debut), b=jour(t.fin)+864e5;
+  return s + clamp((tNow-a)/(b-a), 0, 1);
+}, 0) / DATA.length * 100);
+const ecart = avg - prevu;
+const tempsPct = Math.round(clamp((tNow-jour(PROJET_DEBUT))/(jour(PROJET_FIN)+864e5-jour(PROJET_DEBUT)),0,1)*100);
+const eventPct = (jour(EVENT)-jour(PROJET_DEBUT))/(jour(PROJET_FIN)+864e5-jour(PROJET_DEBUT))*100;
+const commencees = DATA.filter(t => t.debut && t.debut <= today && t.statut !== 'Fait');
+const aProbleme = commencees.filter(t => isLate(t) || t.a_risque === 'Oui').length;
+const risquePct = commencees.length ? Math.round(aProbleme/commencees.length*100) : 0;
+
+function cadran(id, o){
+  const box=document.getElementById(id); box.replaceChildren();
+  const W=200, H=166, cx=100, cy=100, R=78, SW=o.epais||13, A0=-120, A1=120;
+  const ang = v => A0 + (clamp(v,o.min,o.max)-o.min)/(o.max-o.min)*(A1-A0);
+  const pt = (a,r) => [cx + r*Math.sin(a*Math.PI/180), cy - r*Math.cos(a*Math.PI/180)];
+  const arc = (a,b,r) => { const [x0,y0]=pt(a,r), [x1,y1]=pt(b,r); return `M${x0} ${y0} A${r} ${r} 0 ${b-a>180?1:0} 1 ${x1} ${y1}`; };
+  const svg=sv('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':o.aria}); box.append(svg);
+  sv('circle',{cx,cy,r:R+16,fill:'var(--dial)',stroke:'var(--line)','stroke-width':1.5},svg);
+  sv('path',{d:arc(A0,A1,R),fill:'none',stroke:'var(--track)','stroke-width':SW},svg);
+  (o.zones||[]).forEach(z => sv('path',{d:arc(ang(z.de),ang(z.a),R),fill:'none',stroke:z.c,'stroke-width':SW,opacity:z.op??1},svg));
+  if (o.rempli!=null) sv('path',{d:arc(A0,ang(o.rempli),R),fill:'none',stroke:o.rempliC,'stroke-width':SW},svg);
+  for (let i=0;i<=o.graduations;i++){
+    const v=o.min+(o.max-o.min)*i/o.graduations, a=ang(v), maj=i%o.majeur===0;
+    const [x0,y0]=pt(a,R-SW/2-3), [x1,y1]=pt(a,R-SW/2-(maj?11:6));
+    sv('line',{x1:x0,y1:y0,x2:x1,y2:y1,stroke:'var(--muted)','stroke-width':maj?1.6:1},svg);
+    if (maj && o.etiquette){ const [tx,ty]=pt(a,R-SW/2-21); const t=sv('text',{x:tx,y:ty+3,'text-anchor':'middle','font-size':9,fill:'var(--muted)'},svg); t.textContent=o.etiquette(v); }
+  }
+  if (o.repere!=null){ const a=ang(o.repere); const [x0,y0]=pt(a,R-SW/2-1), [x1,y1]=pt(a,R+SW/2+3); sv('line',{x1:x0,y1:y0,x2:x1,y2:y1,stroke:'var(--brand)','stroke-width':3,'stroke-linecap':'round'},svg); }
+  (o.bornes||[]).forEach(([v,txt]) => { const [x,y]=pt(ang(v),R); const t=sv('text',{x,y:y+19,'text-anchor':'middle','font-size':9.5,fill:'var(--muted)','font-weight':600},svg); t.textContent=txt; });
+  const g=sv('g',{class:'needle'},svg);
+  g.style.transformOrigin=`${cx}px ${cy}px`; g.style.transformBox='view-box';
+  sv('polygon',{points:`${cx-4},${cy} ${cx},${cy-R+4} ${cx+4},${cy} ${cx},${cy+12}`,fill:o.aiguille||'var(--ink)'},g);
+  sv('circle',{cx,cy,r:7,fill:'var(--panel)',stroke:o.aiguille||'var(--ink)','stroke-width':3},svg);
+  g.style.transform=`rotate(${A0}deg)`;
+  requestAnimationFrame(() => requestAnimationFrame(() => { g.style.transform=`rotate(${ang(o.valeur)}deg)`; }));
+}
+const setTxt = (id, txt, color) => { const e=document.getElementById(id); e.textContent=txt; if (color) e.style.color=color; };
+
+// Gauche : temps écoulé
+cadran('g-temps',{min:0,max:100,valeur:tempsPct,rempli:tempsPct,rempliC:'var(--brand)',graduations:10,majeur:5,etiquette:v=>v+'%',repere:eventPct,aria:'Temps écoulé '+tempsPct+' %'});
+setTxt('gv-temps', tempsPct+' %');
+setTxt('gs-temps', days>=0 ? days+' jours avant l’événement' : 'Événement passé', 'var(--muted)');
+
+// Centre : avancement global vs prévu (aiguille au centre = dans les temps)
+const etat = ecart < -TOLERANCE ? ['En retard','var(--retard)'] : ecart > TOLERANCE ? ['En avance','var(--ahead)'] : ['Dans les temps','var(--ok)'];
+cadran('g-global',{min:-ECART_MAX,max:ECART_MAX,valeur:ecart,epais:15,graduations:10,majeur:5,
+  zones:[{de:-ECART_MAX,a:-TOLERANCE,c:'var(--retard)',op:.85},{de:-TOLERANCE,a:TOLERANCE,c:'var(--ok)'},{de:TOLERANCE,a:ECART_MAX,c:'var(--ahead)',op:.85}],
+  bornes:[[-ECART_MAX,'En retard','end'],[ECART_MAX,'En avance','start']],aiguille:'var(--ink)',aria:'Avancement global '+avg+' %, '+etat[0]});
+setTxt('gv-global', avg+' %');
+setTxt('gs-global', etat[0], etat[1]);
+setTxt('gx-global', 'Prévu à date : '+prevu+' %. Écart : '+(ecart>0?'+':'')+ecart+' points. Le prévu suppose que chaque tâche datée avance régulièrement entre son début et sa fin.');
+
+// Droite : niveau de risque
+const niv = risquePct < 15 ? ['Faible','var(--ok)'] : risquePct < 35 ? ['Modéré','var(--cours)'] : ['Élevé','var(--retard)'];
+cadran('g-risque',{min:0,max:100,valeur:risquePct,graduations:10,majeur:5,etiquette:v=>v+'%',
+  zones:[{de:0,a:15,c:'var(--ok)',op:.85},{de:15,a:35,c:'var(--cours)',op:.85},{de:35,a:100,c:'var(--retard)',op:.85}],aria:'Niveau de risque '+risquePct+' %, '+niv[0]});
+setTxt('gv-risque', risquePct+' %');
+setTxt('gs-risque', niv[0]+' : '+aProbleme+' sur '+commencees.length+' tâches', niv[1]);
+
 function drawGantt(){
   const box=document.getElementById('gantt'); box.replaceChildren();
   const items=[]; let v=null;
