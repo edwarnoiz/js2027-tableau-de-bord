@@ -5,44 +5,52 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Journées scientifiques RSN 2027 – Avancement des travaux</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --dial:#EEF2F6; --bar:#1F3A5F; --bar-ink:#FFFFFF; --ok:#2A8C7E; --ahead:#3B76B8;
+  --dial:#EEF2F6; --bar:#0C2D5A; --bar-ink:#FFFFFF; --live-bg:#E3F5EA; --live:#15803D; --ok:#2A8C7E; --ahead:#3B76B8;
   --bg:#F6F8FA; --panel:#FFFFFF; --ink:#16263A; --muted:#5B6878; --line:#DDE3EA;
-  --brand:#1F3A5F; --brand-ink:#FFFFFF;
+  --brand:#0C2D5A; --brand-ink:#FFFFFF;
   --fait:#2A8C7E; --cours:#E0A030; --venir:#C5CCD5; --retard:#C8414F; --track:#EDF1F5;
-  --sans:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --serif:"IBM Plex Serif", Georgia, "Times New Roman", serif;
+  --sans:"Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --serif:var(--sans);
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){ --dial:#111A25; --bar:#17212D; --bar-ink:#E6ECF2; --ok:#4DB3A3; --ahead:#6FA3DD; --bg:#0F1620; --panel:#17212D; --ink:#E6ECF2; --muted:#9AA7B6; --line:#2A3746;
+  :root:not([data-theme="light"]){ --dial:#111A25; --bar:#0A1F3D; --bar-ink:#E6ECF2; --live-bg:#12352A; --live:#4ADE80; --ok:#4DB3A3; --ahead:#6FA3DD; --bg:#0F1620; --panel:#17212D; --ink:#E6ECF2; --muted:#9AA7B6; --line:#2A3746;
     --brand:#5D8CC4; --brand-ink:#0F1620; --fait:#4DB3A3; --cours:#F0B54E; --venir:#4A5767; --retard:#E36673; --track:#223040; color-scheme: dark; }
 }
-:root[data-theme="dark"]{ --dial:#111A25; --bar:#17212D; --bar-ink:#E6ECF2; --ok:#4DB3A3; --ahead:#6FA3DD; --bg:#0F1620; --panel:#17212D; --ink:#E6ECF2; --muted:#9AA7B6; --line:#2A3746;
+:root[data-theme="dark"]{ --dial:#111A25; --bar:#0A1F3D; --bar-ink:#E6ECF2; --live-bg:#12352A; --live:#4ADE80; --ok:#4DB3A3; --ahead:#6FA3DD; --bg:#0F1620; --panel:#17212D; --ink:#E6ECF2; --muted:#9AA7B6; --line:#2A3746;
     --brand:#5D8CC4; --brand-ink:#0F1620; --fait:#4DB3A3; --cours:#F0B54E; --venir:#4A5767; --retard:#E36673; --track:#223040; color-scheme: dark; }
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.45}
 .wrap{max-width:1180px;margin:0 auto;padding:28px 20px 60px;display:grid;gap:28px}
 header{display:grid;gap:10px}
 .top{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;justify-content:space-between}
-h1{font-family:var(--serif);font-weight:500;font-size:clamp(1.6rem,3.5vw,2.3rem);margin:0;line-height:1.15}
+h1{font-weight:700;font-size:1.35rem;margin:0;line-height:1.2;letter-spacing:-.01em}
 .sub{margin:4px 0 0;color:var(--muted);font-size:.9rem}
 .btn{display:inline-flex;align-items:center;gap:10px;background:var(--brand);color:var(--brand-ink);text-decoration:none;font-weight:600;padding:12px 18px;border-radius:8px;font-size:.95rem;white-space:nowrap}
 .btn:hover{filter:brightness(1.1)}
 .btn:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--cours);outline-offset:2px}
 .btn svg{flex:none}
-.topbar{background:var(--bar);color:var(--bar-ink);border-bottom:1px solid var(--line)}
-.topbar-in{max-width:1180px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.org{font-weight:600;letter-spacing:.01em}
-.theme-btn{font:inherit;font-size:.85rem;padding:5px 12px;border-radius:999px;border:1px solid currentColor;background:transparent;color:inherit;cursor:pointer}
-.theme-btn:hover{background:rgba(255,255,255,.12)}
-.status{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px}
-.pill{display:inline-flex;align-items:center;gap:6px;font-size:.82rem;font-weight:500;padding:4px 11px;border-radius:999px;border:1px solid var(--line);color:var(--muted);background:var(--panel)}
-.pill.on{color:var(--ok);border-color:var(--ok)}
-.pill.off{color:var(--retard);border-color:var(--retard)}
-.status .refresh{margin-left:0}
+.topbar{background:var(--bar);color:var(--bar-ink);box-shadow:0 1px 0 rgba(0,0,0,.25)}
+.topbar-in{padding:14px 30px;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:66px}
+.logo{display:inline-flex;align-items:center;gap:8px;color:#fff;text-decoration:none}
+.logo svg{flex:none}
+.logo-txt{display:flex;flex-direction:column;line-height:1}
+.logo-txt b{font-weight:800;font-size:1.75rem;letter-spacing:-.04em}
+.logo-txt small{font-size:.43rem;font-weight:600;letter-spacing:.09em;margin-top:3px}
+.theme-btn{font:inherit;font-size:.88rem;font-weight:500;padding:8px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#fff;cursor:pointer;white-space:nowrap}
+.theme-btn:hover{background:rgba(255,255,255,.16)}
+.hd{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:12px 20px}
+.status{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.live{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;font-weight:500;padding:4px 10px;border-radius:999px;color:var(--muted);background:var(--track)}
+.live.on{color:var(--live);background:var(--live-bg)}
+.live.off{color:var(--retard);background:var(--track)}
+.majtxt{font-size:.8rem;color:var(--muted)}
+.status .refresh{margin-left:0;padding:7px 14px;border-radius:8px}
+.btn-sheet{display:inline-flex;align-items:center;gap:8px;background:var(--brand);color:var(--brand-ink);text-decoration:none;font-weight:600;font-size:.85rem;padding:8px 14px;border-radius:8px;white-space:nowrap}
+.btn-sheet:hover{filter:brightness(1.15)}
 .etat.on{color:var(--fait);font-weight:500}.etat.off{color:var(--retard);font-weight:500}
 .refresh{font:inherit;font-size:.85rem;margin-left:8px;padding:3px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink);cursor:pointer}
 .take{font-size:1.05rem;max-width:62rem;margin:6px 0 0}
@@ -54,7 +62,7 @@ h1{font-family:var(--serif);font-weight:500;font-size:clamp(1.6rem,3.5vw,2.3rem)
 .gsvg{width:100%;max-width:230px}
 .g-main .gsvg{max-width:340px}
 .gsvg svg{display:block;width:100%;height:auto;overflow:hidden}
-.gval{margin:-2px 0 0;font-family:var(--serif);font-weight:500;font-size:1.7rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.gval{margin:-2px 0 0;font-weight:700;font-size:1.7rem;line-height:1.1;font-variant-numeric:tabular-nums}
 .g-main .gval{font-size:2.4rem}
 .gstat{margin:2px 0 0;font-weight:600;font-size:.9rem}
 .gsub{margin:4px 0 0;font-size:.78rem;color:var(--muted);max-width:22rem}
@@ -64,7 +72,7 @@ h1{font-family:var(--serif);font-weight:500;font-size:clamp(1.6rem,3.5vw,2.3rem)
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
 .kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;gap:4px}
 .kpi .l{font-size:.8rem;color:var(--muted)}
-.kpi .n{font-family:var(--serif);font-weight:500;font-size:2rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi .n{font-weight:700;font-size:2rem;line-height:1.1;font-variant-numeric:tabular-nums}
 .kpi .n small{font-family:var(--sans);font-size:.95rem;color:var(--muted);font-weight:400}
 .kpi .d{font-size:.78rem;color:var(--muted)}
 .bad{color:var(--retard)} .warn{color:var(--cours)}
@@ -106,25 +114,31 @@ footer{font-size:.8rem;color:var(--muted)}
 <body>
 <div class="topbar">
   <div class="topbar-in">
-    <span class="org">Réseau Santé Numérique</span>
+    <span class="logo" aria-label="RSN – Réseau Santé Numérique">
+      <svg width="34" height="34" viewBox="0 0 40 40" aria-hidden="true" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round">
+        <path d="M20 3 35 11.5v17L20 37 5 28.5v-17Z"/><path d="M20 20 35 11.5M20 20 5 11.5M20 20v17"/><path d="M20 10.5 27.5 15v9L20 28.5 12.5 24v-9Z" stroke-width="1.3"/>
+      </svg>
+      <span class="logo-txt"><b>RSN</b><small>RÉSEAU SANTÉ NUMÉRIQUE</small></span>
+    </span>
     <button type="button" class="theme-btn" id="theme" aria-label="Changer de thème"></button>
   </div>
 </div>
 <div class="wrap">
   <header>
-    <div class="top">
+    <div class="hd">
       <div>
         <h1>Journées scientifiques 2027</h1>
-        <p class="sub">Suivi de projet · Événement les 30 et 31 mars 2027 · Données au <span id="maj"></span></p>
-        <div class="status">
-          <span id="etat" class="pill">Chargement…</span>
-          <button type="button" class="refresh" onclick="location.reload()">↻ Actualiser</button>
-        </div>
+        <p class="sub">Suivi de projet · Événement les 30 et 31 mars 2027</p>
       </div>
-      <a class="btn" href="https://docs.google.com/spreadsheets/d/1SuvtGdo_z4SNHIS8nyhP7XJomjMQRiBCQNAH3KZcqvA/edit?usp=sharing" target="_blank" rel="noopener">
-        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 9h18M3 15h18M9 3v18" stroke="currentColor" stroke-width="2"/></svg>
-        Ouvrir le fichier de suivi (Google Sheets)
-      </a>
+      <div class="status">
+        <span id="etat" class="live">Chargement…</span>
+        <span class="majtxt">Mis à jour le <span id="maj">—</span></span>
+        <button type="button" class="refresh" onclick="location.reload()">↻ Actualiser</button>
+        <a class="btn-sheet" href="https://docs.google.com/spreadsheets/d/1SuvtGdo_z4SNHIS8nyhP7XJomjMQRiBCQNAH3KZcqvA/edit?usp=sharing" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 9h18M3 15h18M9 3v18" stroke="currentColor" stroke-width="2"/></svg>
+          Ouvrir le Google Sheet
+        </a>
+      </div>
     </div>
     <p class="take" id="take"></p>
   </header>
@@ -270,12 +284,12 @@ function lireTaches(rows){
     if (!DATA) throw new Error('aucune source');
   } catch(e) {
     document.getElementById('etat').textContent = '⚠ Données hors ligne';
-    document.getElementById('etat').className = 'pill off';
+    document.getElementById('etat').className = 'live off';
     document.getElementById('take').textContent = 'Les données du Google Sheet n’ont pas pu être lues. Vérifiez que le fichier est partagé « Tous les utilisateurs disposant du lien », ou ouvrez-le avec le bouton.';
     return;
   }
   document.getElementById('etat').textContent = '● Google Sheet live';
-  document.getElementById('etat').className = 'pill on';
+  document.getElementById('etat').className = 'live on';
   const EXPORT_DATE = new Date().toISOString().slice(0,10);
 const EVENT = "2027-03-30";
 const MOIS = ['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
